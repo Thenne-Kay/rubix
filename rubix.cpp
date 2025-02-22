@@ -244,7 +244,7 @@ class rubix
             
             std::swap(f_front,f_upper);
             std::swap(f_front,f_back);
-            std::swap(f_front,f_back);
+            std::swap(f_front,f_lower);
 
         }
 
@@ -258,47 +258,173 @@ class rubix
         rotate(*f_right,1,n);
 
     }
+
     void roll_bck(int n)
     {
-        down(n,0);
-        down(n,1);
-        down(n,2);
+        
+        if(n==1)
+        {
+            
+            std::swap(f_front,f_lower);
+            std::swap(f_front,f_back);
+            std::swap(f_front,f_upper);
+
+        }
+
+        else
+        {
+            std::swap(f_front, f_back);
+            std::swap(f_upper, f_lower);
+        }
+        
+        rotate(*f_left,1,n);
+        rotate(*f_right,0,n);
 
     }
+   
     void roll_right(int n)
     {
-        clockw(n,0);
-        clockw(n,1);
-        clockw(n,2);
+        
+        if(n==1)
+        {
+            std::swap(f_upper,f_right);
+            std::swap(f_upper,f_lower);
+            std::swap(f_upper,f_left);
+
+            rotate(*f_upper,1,1);
+            rotate(*f_right,1,1);
+            rotate(*f_lower,1,1);
+            rotate(*f_left,1,1);
+
+        }
+
+        else
+        {
+            std::swap(f_upper,f_lower);
+            std::swap(f_left,f_right);
+
+            rotate(*f_lower,1,2);
+            rotate(*f_upper,1,2);
+            rotate(*f_right,1,2);
+            rotate(*f_left,1,2);
+
+        }
+
+        rotate(*f_front,1,n);
+        rotate(*f_back,0,n);
+
+
+
+        // clockw(n,0);
+        // clockw(n,1);
+        // clockw(n,2);
 
     }
+
     void roll_left(int n)
     {
-        antclockw(n,0);
-        antclockw(n,1);
-        antclockw(n,2);
+        
+        if(n==1)
+        {
+            std::swap(f_upper,f_left);
+            std::swap(f_upper,f_lower);
+            std::swap(f_upper,f_right);
+
+            rotate(*f_upper,0,1);
+            rotate(*f_right,0,1);
+            rotate(*f_lower,0,1);
+            rotate(*f_left,0,1);
+
+        }
+
+        else
+        {
+            std::swap(f_upper,f_lower);
+            std::swap(f_left,f_right);
+
+            rotate(*f_lower,1,2);
+            rotate(*f_upper,1,2);
+            rotate(*f_right,1,2);
+            rotate(*f_left,1,2);
+
+        }
+
+        rotate(*f_front,0,n);
+        rotate(*f_back,1,n);
+
 
     }
+   
     void turn_right(int n)
     {
-        right(n,0);
-        right(n,1);
-        right(n,2);
+        if(n==1)
+        {
+            std::swap(f_front,f_right);
+            std::swap(f_front,f_back);
+            std::swap(f_front,f_left);
+
+            rotate(*f_back,1,2);
+            rotate(*f_left,1,2);
+
+        }
+        else
+        {
+            std::swap(f_front,f_back);
+            std::swap(f_left,f_left);
+
+            rotate(*f_back,1,2);
+            rotate(*f_front,1,2);
+
+        }
+
+        rotate(*f_upper,0,n);
+        rotate(*f_lower,1,n);
+
 
     }
+
     void turn_left(int n)
     {
-        left(n,0);
-        left(n,1);
-        left(n,2);
+        if(n==1)
+        {
+            std::swap(f_front,f_left);
+            std::swap(f_front,f_back);
+            std::swap(f_front,f_right);
+
+            rotate(*f_back,1,2);
+            rotate(*f_left,0,2);
+
+        }
+        else
+        {
+            std::swap(f_front,f_back);
+            std::swap(f_left,f_left);
+
+            rotate(*f_back,1,2);
+            rotate(*f_front,1,2);
+
+        }
+
+        rotate(*f_upper,1,n);
+        rotate(*f_lower,0,n);
+
 
     }
+   
 
     //plays
 
     void test()
     {
-        // red={'a','b','c','d','e','f','g','h','i'};
+        green = {'0', '1', '2', '3', 'g', '5', '6', '7', '8'};
+        white = {'0', '1', '2', '3', 'w', '5', '6', '7', '8'};
+        blue = {'0', '1', '2', '3', 'b', '5', '6', '7', '8'};
+        yellow = {'0', '1', '2', '3', 'y', '5', '6', '7', '8'};
+        red = {'0', '1', '2', '3', 'r', '5', '6', '7', '8'};
+        orange = {'0', '1', '2', '3', 'o', '5', '6', '7', '8'};
+
+
+        roll_frd(1);
         print_all();
 
       
