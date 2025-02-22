@@ -15,16 +15,16 @@ class rubix
     std::vector<char> white;
     std::vector<char> yellow;
 
-    std::vector<char>& f_front;
-    std::vector<char>& f_back;
-    std::vector<char>& f_left;
-    std::vector<char>& f_right;
-    std::vector<char>& f_upper;
-    std::vector<char>& f_lower;
+    std::vector<char>* f_front;
+    std::vector<char>* f_back;
+    std::vector<char>* f_left;
+    std::vector<char>* f_right;
+    std::vector<char>* f_upper;
+    std::vector<char>* f_lower;
 
     public:
 
-    rubix(): red(9, 'R'), white(9, 'W'), orange(9, 'O'), yellow(9, 'Y'), green(9, 'G'), blue(9, 'B'),f_front(red), f_back(orange), f_left(green), f_right(blue), f_upper(white), f_lower(yellow)
+    rubix(): red(9, 'R'), white(9, 'W'), orange(9, 'O'), yellow(9, 'Y'), green(9, 'G'), blue(9, 'B'),f_front(&red), f_back(&orange), f_left(&green), f_right(&blue), f_upper(&white), f_lower(&yellow)
     {
       
     };
@@ -68,12 +68,12 @@ class rubix
 
     void print_all()
     {
-        print(f_front);
-        print(f_upper);
-        print(f_back);
-        print(f_lower);
-        print(f_left);
-        print(f_right);
+        print(*f_front);
+        print(*f_upper);
+        print(*f_back);
+        print(*f_lower);
+        print(*f_left);
+        print(*f_right);
     }
 
     void reset()
@@ -103,20 +103,20 @@ class rubix
     {
         if(n==2)
         {
-            swap(f_front,f_back,{{col,col},{col+3,col+3},{col+6,col+6}});  
-            swap(f_lower,f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_back,{{col,col},{col+3,col+3},{col+6,col+6}});  
+            swap(*f_lower,*f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});
         }
 
         else if(n==1)
         {
-            swap(f_front,f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});    //036 036  147 147  258 258
-            swap(f_front,f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
-            swap(f_front,f_lower,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});    //036 036  147 147  258 258
+            swap(*f_front,*f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_lower,{{col,col},{col+3,col+3},{col+6,col+6}});
 
         }
 
-        if(col==0) rotate(f_left,0,n);
-        else if(col==2) rotate(f_right,1,n);
+        if(col==0) rotate(*f_left,0,n);
+        else if(col==2) rotate(*f_right,1,n);
         
 
     }
@@ -124,20 +124,20 @@ class rubix
     {
         if(n==2)
         {
-            swap(f_front,f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
-            swap(f_lower,f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_lower,*f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});
         }
 
         else if(n==1)
         {
-            swap(f_front,f_lower,{{col,col},{col+3,col+3},{col+6,col+6}});
-            swap(f_front,f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
-            swap(f_front,f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_lower,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
+            swap(*f_front,*f_upper,{{col,col},{col+3,col+3},{col+6,col+6}});
 
         }
 
-        if(col==0) rotate(f_left,1,n);
-        else if(col==2) rotate(f_right,0,n);
+        if(col==0) rotate(*f_left,1,n);
+        else if(col==2) rotate(*f_right,0,n);
         
 
     }
@@ -146,21 +146,21 @@ class rubix
     {
         if(n==2)
         {
-            swap(f_front,f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
-            swap(f_left,f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,678  345 345  678 012
+            swap(*f_front,*f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
+            swap(*f_left,*f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,678  345 345  678 012
         }
 
         else if(n==1)
         {
-            swap(f_front,f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
-            swap(f_front,f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
-            swap(f_front,f_left,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
+            swap(*f_front,*f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
+            swap(*f_front,*f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
+            swap(*f_front,*f_left,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
             
 
         }
 
-        if(row==0) rotate(f_upper,0,n);
-        else if(row==2) rotate(f_lower,1,n);
+        if(row==0) rotate(*f_upper,0,n);
+        else if(row==2) rotate(*f_lower,1,n);
         
 
     }
@@ -169,20 +169,20 @@ class rubix
     {
         if(n==2)
         {
-            swap(f_front,f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210 //*error
-            swap(f_left,f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,678  345 345  678 012
+            swap(*f_front,*f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210 //*error
+            swap(*f_left,*f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,678  345 345  678 012
         }
 
         else if(n==1)
         {
-            swap(f_front,f_left,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
-            swap(f_front,f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
-            swap(f_front,f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
+            swap(*f_front,*f_left,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
+            swap(*f_front,*f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
+            swap(*f_front,*f_right,{{3*row,3*row},{3*row+1,3*row+1},{3*row+2,3*row+2}});  //012,012  345 345  678 678
             
         }
 
-        if(row==0) rotate(f_upper,1,n);
-        else if(row==2) rotate(f_lower,0,n);
+        if(row==0) rotate(*f_upper,1,n);
+        else if(row==2) rotate(*f_lower,0,n);
         
 
     }
@@ -191,21 +191,21 @@ class rubix
     {
         if(n==2)
         {
-            swap(f_upper,f_lower,{{3*pos,6-(3*pos)+2},{3*pos+1,6-(3*pos)+1},{3*pos+2,6-(3*pos)}});  //012 876  345 543  678 210
-            swap(f_left,f_right,{{pos,2-pos+6},{pos+3,2-pos+3},{pos+6,2-pos}});  //036 852   147 741 258 630
+            swap(*f_upper,*f_lower,{{3*pos,6-(3*pos)+2},{3*pos+1,6-(3*pos)+1},{3*pos+2,6-(3*pos)}});  //012 876  345 543  678 210
+            swap(*f_left,*f_right,{{pos,2-pos+6},{pos+3,2-pos+3},{pos+6,2-pos}});  //036 852   147 741 258 630
 
         }
 
         else
         {
-            swap(f_upper,f_right,{{3*pos,2-pos},{3*pos+1,2-pos+3},{3*pos+2,2-pos+6}}); //012 258   345 147    678 036
-            swap(f_upper, f_lower, {{3*pos, 6-(3*pos)+2}, {3*pos+1, 6-(3*pos)+1}, {3*pos+2, 6-(3*pos)}}); // 012 876   345 543    678 210
-            swap(f_upper,f_left,{{3*pos,pos+6},{3*pos+1,pos+3},{3*pos+2,pos}}); //012 630   345 741    678 852
+            swap(*f_upper,*f_right,{{3*pos,2-pos},{3*pos+1,2-pos+3},{3*pos+2,2-pos+6}}); //012 258   345 147    678 036
+            swap(*f_upper, *f_lower, {{3*pos, 6-(3*pos)+2}, {3*pos+1, 6-(3*pos)+1}, {3*pos+2, 6-(3*pos)}}); // 012 876   345 543    678 210
+            swap(*f_upper,*f_left,{{3*pos,pos+6},{3*pos+1,pos+3},{3*pos+2,pos}}); //012 630   345 741    678 852
 
         }
 
-        if(pos==0) rotate(f_back,0,n);
-        else if(pos==2) rotate(f_front,1,n);
+        if(pos==0) rotate(*f_back,0,n);
+        else if(pos==2) rotate(*f_front,1,n);
         
 
     }
@@ -214,21 +214,21 @@ class rubix
     {
         if(n==2)
         {
-            swap(f_left,f_right,{{pos,2-pos+6},{pos+3,2-pos+3},{pos+6,2-pos}});  //036 852   147 741 258 630
-            swap(f_upper,f_lower,{{3*pos,6-(3*pos)+2},{3*pos+1,6-(3*pos)+1},{3*pos+2,6-(3*pos)}});  //012 876  345 543  678 210
+            swap(*f_left,*f_right,{{pos,2-pos+6},{pos+3,2-pos+3},{pos+6,2-pos}});  //036 852   147 741 258 630
+            swap(*f_upper,*f_lower,{{3*pos,6-(3*pos)+2},{3*pos+1,6-(3*pos)+1},{3*pos+2,6-(3*pos)}});  //012 876  345 543  678 210
 
         }
 
         else
         {
-            swap(f_upper,f_left,{{3*pos,pos+6},{3*pos+1,pos+3},{3*pos+2,pos}}); //012 630   345 741    678 852
-            swap(f_upper, f_lower, {{3*pos, 6-(3*pos)+2}, {3*pos+1, 6-(3*pos)+1}, {3*pos+2, 6-(3*pos)}}); // 012 876   345 543    678 210
-            swap(f_upper,f_right,{{3*pos,2-pos},{3*pos+1,2-pos+3},{3*pos+2,2-pos+6}}); //012 258   345 147    678 036
+            swap(*f_upper,*f_left,{{3*pos,pos+6},{3*pos+1,pos+3},{3*pos+2,pos}}); //012 630   345 741    678 852
+            swap(*f_upper, *f_lower, {{3*pos, 6-(3*pos)+2}, {3*pos+1, 6-(3*pos)+1}, {3*pos+2, 6-(3*pos)}}); // 012 876   345 543    678 210
+            swap(*f_upper,*f_right,{{3*pos,2-pos},{3*pos+1,2-pos+3},{3*pos+2,2-pos+6}}); //012 258   345 147    678 036
 
         }
 
-        if(pos==0) rotate(f_back,1,n);
-        else if(pos==2) rotate(f_front,0,n);
+        if(pos==0) rotate(*f_back,1,n);
+        else if(pos==2) rotate(*f_front,0,n);
         
 
     }
@@ -238,9 +238,24 @@ class rubix
 
     void roll_frd(int n)
     {
-        up(n,0);
-        up(n,1);
-        up(n,2);
+        
+        if(n==1)
+        {
+            
+            std::swap(f_front,f_upper);
+            std::swap(f_front,f_back);
+            std::swap(f_front,f_back);
+
+        }
+
+        else
+        {
+            std::swap(f_front, f_back);
+            std::swap(f_upper, f_lower);
+        }
+        
+        rotate(*f_left,0,n);
+        rotate(*f_right,1,n);
 
     }
     void roll_bck(int n)
