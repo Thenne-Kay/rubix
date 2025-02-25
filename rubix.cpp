@@ -370,7 +370,7 @@ class rubix
         else
         {
             std::swap(f_front,f_back);
-            std::swap(f_left,f_left);
+            std::swap(f_left,f_right);
 
             rotate(*f_back,1,2);
             rotate(*f_front,1,2);
@@ -392,13 +392,13 @@ class rubix
             std::swap(f_front,f_right);
 
             rotate(*f_back,1,2);
-            rotate(*f_left,0,2);
+            rotate(*f_right,0,2);
 
         }
         else
         {
             std::swap(f_front,f_back);
-            std::swap(f_left,f_left);
+            std::swap(f_left,f_right);
 
             rotate(*f_back,1,2);
             rotate(*f_front,1,2);
@@ -424,7 +424,13 @@ class rubix
         orange = {'0', '1', '2', '3', 'o', '5', '6', '7', '8'};
 
 
-        roll_frd(1);
+        clockw(1,0);
+        print_all();
+        antclockw(1,0);
+        print_all();
+        clockw(2,0);
+        print_all();
+        antclockw(2,0);
         print_all();
 
       
