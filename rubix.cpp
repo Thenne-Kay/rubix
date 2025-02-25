@@ -6,6 +6,7 @@
 
 
 
+
 class rubix 
 {
     std::vector<char> red;
@@ -85,6 +86,15 @@ class rubix
         green=std::vector<char>(9, 'G');
         blue=std::vector<char>(9, 'B');
     }
+
+    bool edge_parity()
+    {}
+
+    bool corner_parity()
+    {}
+
+    bool permutation_parity()
+    {}
 
     //moves
 
@@ -314,10 +324,6 @@ class rubix
         rotate(*f_back,0,n);
 
 
-
-        // clockw(n,0);
-        // clockw(n,1);
-        // clockw(n,2);
 
     }
 
