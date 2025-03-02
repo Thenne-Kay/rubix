@@ -4,7 +4,80 @@
 
 #include<algorithm>
 
+#include<unordered_map>
 
+
+
+class edge
+{
+    public:
+    int a;
+    int b;
+    std::vector<char> *&col_a;
+    std::vector<char> *&col_b;
+
+    edge(std::vector<char> *&vec_a, std::vector<char> *&vec_b) : col_a(vec_a), col_b(vec_b)
+    {
+       
+    }
+
+    void set_ptr( std::vector<char>* &vec_a, std::vector<char>* &vec_b)
+    {
+        col_a=vec_a;
+        col_b=vec_b;
+    }
+
+    void set_index(int a,int b)
+    {
+        this->a=a;
+        this->b=b;
+    }
+
+    std::pair<char,char> get_colr()
+    {
+
+        return {(*col_a)[a],(*col_b)[b]};
+    }
+
+};
+
+class corner
+{
+    public:
+    int a;
+    int b;
+    int c;
+    std::vector<char> *&col_a;
+    std::vector<char> *&col_b;
+    std::vector<char> *&col_c;
+
+    corner(std::vector<char> *&vec_a, std::vector<char> *&vec_b, std::vector<char> *&vec_c) : col_a(vec_a), col_b(vec_b), col_c(vec_c)
+    {
+
+    }
+
+    void set_ptr( std::vector<char>* &vec_a, std::vector<char>* &vec_b,std::vector<char>* &vec_c)
+    {
+        col_a=vec_a;
+        col_b=vec_b;
+        col_c=vec_c;
+
+    }
+
+    void set_index(int a,int b, int c)
+    {
+        this->a=a;
+        this->b=b;
+        this->c=c;
+    }
+
+    std::vector<char> get_colr()
+    {
+       
+        return {(*col_a)[a],(*col_b)[b],(*col_c)[c]};
+    }
+
+};
 
 
 class rubix 
@@ -23,22 +96,76 @@ class rubix
     std::vector<char>* f_upper;
     std::vector<char>* f_lower;
 
+
+    edge edge0;
+    edge edge1;
+    edge edge2;
+    edge edge3;
+    edge edge4;
+    edge edge5;
+    edge edge6;
+    edge edge7;
+    edge edge8;
+    edge edge9;
+    edge edge10;
+    edge edge11;
+
+    corner corner0;
+    corner corner1;
+    corner corner2;
+    corner corner3;
+    corner corner4;
+    corner corner5;
+    corner corner6;
+    corner corner7;
+
+    std::vector<edge*> edges{&edge0, &edge1, &edge2, &edge3, &edge4, &edge5, &edge6, &edge7 ,&edge8, &edge9, &edge10, &edge11};
+    std::vector<corner*> corners{&corner0, &corner1, &corner2, &corner3, &corner4, &corner5, &corner6, &corner7 };
+
+
     public:
+        rubix() : red(9, 'R'), white(9, 'W'), orange(9, 'O'), yellow(9, 'Y'), green(9, 'G'), blue(9, 'B'), f_front(&red), f_back(&orange), f_left(&green), f_right(&blue), f_upper(&white), f_lower(&yellow),
+                  edge0(f_front, f_left), edge1(f_front, f_upper), edge2(f_front, f_right), edge3(f_front, f_lower), 
+                  edge4(f_upper, f_left), edge5(f_upper, f_right), edge6(f_lower, f_right), edge7(f_lower, f_left),
+                  edge8(f_back, f_left), edge9(f_back, f_upper), edge10(f_back, f_right), edge11(f_back, f_lower),
+                  corner0(f_front, f_left, f_upper), corner1(f_front, f_upper, f_right), corner2(f_front, f_right, f_lower), corner3(f_front, f_lower, f_left),
+                  corner4(f_back, f_upper ,f_left), corner5(f_back, f_right, f_upper), corner6(f_back, f_lower ,f_right), corner7(f_back, f_left, f_lower)
 
-    rubix(): red(9, 'R'), white(9, 'W'), orange(9, 'O'), yellow(9, 'Y'), green(9, 'G'), blue(9, 'B'),f_front(&red), f_back(&orange), f_left(&green), f_right(&blue), f_upper(&white), f_lower(&yellow)
-    {
-      
-    };
-
-    //utility
-
-    void swap(std::vector<char> &veca, std::vector<char> &vecb, std::vector<std::pair<int,int>> pos )
-    {
-        for(const auto & [pa,pb]:pos)
         {
-            std::swap(veca[pa],vecb[pb]);
+            edge0.set_index(3,5);
+            edge1.set_index(1,7);
+            edge2.set_index(5,3);
+            edge3.set_index(7,1);
 
-        }
+            edge4.set_index(3,1);
+            edge5.set_index(5,1);
+            edge6.set_index(5,7);
+            edge7.set_index(3,7);
+
+            edge8.set_index(3,3);
+            edge9.set_index(7,1);
+            edge10.set_index(5,5);
+            edge11.set_index(1,7);
+
+            corner0.set_index(0,6,2);
+            corner1.set_index(2,8,0);
+            corner2.set_index(8,2,6);
+            corner3.set_index(6,0,8);
+
+            corner4.set_index(6,0,0);
+            corner5.set_index(8,2,2);
+            corner6.set_index(2,8,8);
+            corner7.set_index(0,6,6);
+        };
+
+        // utility
+
+        void swap(std::vector<char> &veca, std::vector<char> &vecb, std::vector<std::pair<int, int>> pos)
+        {
+            for (const auto &[pa, pb] : pos)
+            {
+                std::swap(veca[pa], vecb[pb]);
+            }
 
     }
     void swap(std::vector<char> &veca, std::vector<std::pair<int,int>> pos )
@@ -87,14 +214,77 @@ class rubix
         blue=std::vector<char>(9, 'B');
     }
 
+
+
     bool edge_parity()
-    {}
+    {
+        std::unordered_map<char,bool> pri_col;
+        pri_col[(*f_front)[4]]=1;
+        pri_col[(*f_back)[4]]=1;
+
+        std::unordered_map<char,bool> sec_col;
+        sec_col[(*f_upper)[4]]=1;
+        sec_col[(*f_lower)[4]]=1;
+
+        bool parity=1;
+
+
+        // lamba function to check an edge
+        auto is_counted=[&pri_col,&sec_col](std::pair<char,char> col_pair)
+        {
+            return pri_col[col_pair.first] || (sec_col[col_pair.first] && !pri_col[col_pair.second]);
+
+        };
+
+        for(auto* &edge_cube :edges)
+        {
+             parity=  is_counted(edge_cube->get_colr()) ?   !parity : parity ;
+
+        }
+
+        return parity;
+
+        
+
+    }
 
     bool corner_parity()
-    {}
+    {
+        std::unordered_map<char, bool> pri_col;
+        pri_col[(*f_front)[4]] = 1;
+        pri_col[(*f_back)[4]] = 1;
+
+        int count=0;
+
+       
+
+        bool parity = 1;
+
+        // lamba function to check an edge
+        auto is_counted = [&pri_col](std::vector<char> col_tri)
+        {
+            if(pri_col[col_tri[0]]) return 0;
+            
+            return pri_col[col_tri[1]] ?   1:-1;
+
+        };
+
+        for(auto* &corner_cube: corners)
+        {
+            count+= is_counted(corner_cube->get_colr());
+
+        }
+
+        return count%3==0;
+
+
+    }
 
     bool permutation_parity()
-    {}
+    {
+
+
+    }
 
     //moves
 
@@ -453,6 +643,9 @@ int main()
     rubix rubix1;
 
     rubix1.test();
+
+    int a=4;
+    int& refa=a;
 
 
 
