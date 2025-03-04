@@ -33,7 +33,7 @@ class edge
         this->b=b;
     }
 
-    std::pair<char,char> get_colr()
+    std::vector<char> get_colr()
     {
 
         return {(*col_a)[a],(*col_b)[b]};
@@ -96,6 +96,8 @@ class rubix
     std::vector<char>* f_upper;
     std::vector<char>* f_lower;
 
+    std::unordered_map<int,int> piece_pos;
+
 
     edge edge0;
     edge edge1;
@@ -118,6 +120,8 @@ class rubix
     corner corner5;
     corner corner6;
     corner corner7;
+
+    
 
     std::vector<edge*> edges{&edge0, &edge1, &edge2, &edge3, &edge4, &edge5, &edge6, &edge7 ,&edge8, &edge9, &edge10, &edge11};
     std::vector<corner*> corners{&corner0, &corner1, &corner2, &corner3, &corner4, &corner5, &corner6, &corner7 };
@@ -214,6 +218,38 @@ class rubix
         blue=std::vector<char>(9, 'B');
     }
 
+    void set_piece_pos()
+    {
+
+        int n=0;
+        for(auto* &edge_cube:edges)
+        {
+           int a=(*edge_cube->col_a)[4];
+           int b=(*edge_cube->col_b)[4];
+
+           piece_pos[(a*b)/10]=n;
+           n++;
+
+        }
+
+        n=0;
+
+        for(auto* &corner_cube:corners)
+        {
+           int a=(*corner_cube->col_a)[4];
+           int b=(*corner_cube->col_b)[4];
+           int c=(*corner_cube->col_c)[4];
+
+           piece_pos[(a*b*c)/1000]=n;
+           n++;
+
+        }
+
+
+
+
+    }
+
 
 
     bool edge_parity()
@@ -230,9 +266,9 @@ class rubix
 
 
         // lamba function to check an edge
-        auto is_counted=[&pri_col,&sec_col](std::pair<char,char> col_pair)
+        auto is_counted=[&pri_col,&sec_col](std::vector<char> col_pair)
         {
-            return pri_col[col_pair.first] || (sec_col[col_pair.first] && !pri_col[col_pair.second]);
+            return pri_col[col_pair[0]] || (sec_col[col_pair[0]] && !pri_col[col_pair[1]]);
 
         };
 
@@ -282,6 +318,63 @@ class rubix
 
     bool permutation_parity()
     {
+        set_piece_pos();
+
+        std::vector<int> edge_swap(12);
+        std::vector<int> corner_swap(8);
+        
+        int n=0;
+        int pos=0;
+        for (auto *&corner_cube : corners)
+        {
+            std::vector<char> keys=corner_cube->get_colr();
+            int prime_key=keys[0]*keys[1]*keys[2];
+            int pos=piece_pos[prime_key/1000];
+
+            corner_swap[n++]=pos;
+
+
+        }
+
+        n=0;
+        pos=0;
+        for (auto *&edge_cube : edges)
+        {
+            std::vector<char> keys=edge_cube->get_colr();
+            int prime_key=keys[0]*keys[1];
+            int pos=piece_pos[prime_key/10];
+
+            corner_swap[n++]=pos;
+
+
+        }
+
+        n=0;
+
+        for(int i=0;i<8;i++)
+        {
+            while(i!=corner_swap[i])
+            {
+                std::swap(corner_swap[i], corner_swap[corner_swap[i]]);
+                n++;
+            }
+
+
+        }
+
+        for(int i=0;i<12;i++)
+        {
+            while(i!=edge_swap[i])
+            {
+                std::swap(edge_swap[i], edge_swap[edge_swap[i]]);
+                n++;
+            }
+
+        }
+
+
+        return n%2==0;
+
 
 
     }
