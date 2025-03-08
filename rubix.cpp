@@ -379,6 +379,35 @@ class rubix
 
     }
 
+    //     2 solved opposite layers and 3 of the remaining edges(from 4) is optimal
+    //     3 faces in a horseshoe and a missing edge(from 2)
+    //     3 orthogonal faces and 2 of the missing edges(from 3)
+    //             Beyond this :
+    //     Any combination of 4 faces involves one of the above cases.
+    // this algorithim uses the  horseshoe meth0d 
+    bool issolved()
+    {
+
+        auto is_face_solved = [&](std::vector<char>& face)
+        {
+            for(auto & sticker : face)
+            {
+                if(sticker !=face[4]) return false;
+
+            }
+
+            return true;
+           
+        };
+
+        bool solved=is_face_solved(*f_front) && is_face_solved(*f_upper) && is_face_solved(*f_lower);
+        
+        return solved && (*f_left)[7]==(*f_left)[4];
+
+
+
+    }
+
     //moves
 
     void rotate(std::vector<char> &face,bool clockwise, int n=1)
