@@ -6,8 +6,6 @@
 
 #include<unordered_map>
 
-
-
 class edge
 {
     public:
@@ -127,6 +125,15 @@ class rubix
     std::vector<corner*> corners{&corner0, &corner1, &corner2, &corner3, &corner4, &corner5, &corner6, &corner7 };
 
 
+    std::vector<std::vector<int>> moves_made;
+    std::vector<std::vector<std::vector<int>>> soln;
+
+    std::vector<char> plane_moves={'R','U','F'};
+    std::vector<int> level_moves={0,2};
+    std::vector<int> turn_moves={1,2,-1};
+
+
+
     public:
         rubix() : red(9, 'R'), white(9, 'W'), orange(9, 'O'), yellow(9, 'Y'), green(9, 'G'), blue(9, 'B'), f_front(&red), f_back(&orange), f_left(&green), f_right(&blue), f_upper(&white), f_lower(&yellow),
                   edge0(f_front, f_left), edge1(f_front, f_upper), edge2(f_front, f_right), edge3(f_front, f_lower), 
@@ -164,7 +171,7 @@ class rubix
 
         // utility
 
-        void swap(std::vector<char> &veca, std::vector<char> &vecb, std::vector<std::pair<int, int>> pos)
+    void swap(std::vector<char> &veca, std::vector<char> &vecb, std::vector<std::pair<int, int>> pos)
         {
             for (const auto &[pa, pb] : pos)
             {
@@ -407,8 +414,127 @@ class rubix
 
 
     }
+    //* solving essentials
 
-    //moves
+    void randomize()
+    {
+
+    }
+
+    //move = plane level turns 
+    // plane R F U
+    // level(0,1), 1 means inversion of plane eg R=L
+    // negative turn means inversion of move R=R'
+    void decode_move(char& plane, int& level, int& n)
+    {
+        if(plane=='R') up(n,2-level);
+        else if (plane=='U') right(n,level);
+        else if (plane=='F') clockw(n,2-level);
+
+    }
+
+    void reverse_move(char plane, int level, int n)
+    {
+        if(plane=='R') up(-n,2-level);
+        else if (plane=='U') right(-n,level);
+        else if (plane=='F') clockw(-n,2-level);
+
+    }
+
+   
+
+    bool is_move_valid(char& plane, int& level)
+    {
+        int sz=moves_made.size();
+        if(sz==0) return 1;
+
+        if(moves_made[sz-1][0]!=plane) return 1;
+
+        // wrong , adjust later
+        bool same_level=0;
+        for(int x=sz-1;x>=0 && moves_made[x][0]==plane;x--)
+        {
+            same_level= (moves_made[x][1]==level);
+
+            if(same_level) return 0;
+
+        }
+
+
+        return 1;
+
+    }
+
+    int paths=0;
+
+    int dfs_solve(int limit=20,int count=0)
+    { 
+        if(issolved())
+        {
+            soln.push_back(moves_made);
+            paths++;
+            return count;
+        }
+
+        if(count>=limit) {paths++;return limit;}
+
+        for(auto& plane : plane_moves)
+        {
+            for(auto& level : level_moves)
+            {
+                for(auto& turn : turn_moves)
+                {
+                    if(is_move_valid(plane,level))
+                    {
+                        decode_move(plane,level,turn);
+                        moves_made.push_back({plane,level,turn});
+                        limit=dfs_solve(limit, count+abs(turn));
+
+                        reverse_move(plane,level,turn);
+                        moves_made.pop_back();
+
+                        if(count+1==limit && soln.size()!=0) return limit;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        paths++;
+        return limit;
+        
+    }
+
+    int solve_cube(int limit=20)
+    {
+        moves_made.clear();
+        soln.clear();
+
+        return dfs_solve(limit);
+
+    }
+
+    void print_soln()
+    {
+        for(auto& ans : soln)
+        {
+            std::cout<<"beginning of new soln:\n";
+
+            for(auto& move : ans)
+            {
+                std::cout<<char(move[0])<<move[1]<<" "<<move[2]<<"\n";
+
+            }
+
+        }
+
+    }
+
+    
+    //*moves
 
     void rotate(std::vector<char> &face,bool clockwise, int n=1)
     {
@@ -421,8 +547,17 @@ class rubix
 
     }
 
+    // R(n,2)  L(n,0)
     void up(int n,int col)
     {
+
+        if(n<0) 
+        {
+            down(n*-1,col);
+            return;        
+        
+        }
+
         if(n==2)
         {
             swap(*f_front,*f_back,{{col,col},{col+3,col+3},{col+6,col+6}});  
@@ -442,8 +577,18 @@ class rubix
         
 
     }
+
+    // R'(n,2)  l'(n,0)
     void down(int n,int col)
     {
+        if(n<0) 
+        {
+            up(n*-1,col);
+            return;        
+        
+        }
+
+
         if(n==2)
         {
             swap(*f_front,*f_back,{{col,col},{col+3,col+3},{col+6,col+6}});
@@ -464,8 +609,17 @@ class rubix
 
     }
 
+    // U(n,0)     d(n,2)
     void right(int n,int row)
     {
+
+        if (n < 0)
+        {
+            left(n * -1, row);
+            return;
+        }
+
+
         if(n==2)
         {
             swap(*f_front,*f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210
@@ -487,8 +641,17 @@ class rubix
 
     }
     
+    // u'(n,0)     d'(n,2)
     void left(int n,int row)
     {
+        if(n<0) 
+        {
+            right(n*-1,row);
+            return;        
+        
+        }
+
+
         if(n==2)
         {
             swap(*f_front,*f_back,{{3*row,6-(3*row)+2},{3*row+1,6-(3*row)+1},{3*row+2,6-(3*row)}});  //012,876  345 543  678 210 //*error
@@ -509,8 +672,18 @@ class rubix
 
     }
 
+    // f(n,2)   b(n,0)
     void clockw(int n, int pos)
     {
+        if(n<0) 
+        {
+            antclockw(n*-1,pos);
+            return;        
+        
+        }
+
+
+
         if(n==2)
         {
             swap(*f_upper,*f_lower,{{3*pos,6-(3*pos)+2},{3*pos+1,6-(3*pos)+1},{3*pos+2,6-(3*pos)}});  //012 876  345 543  678 210
@@ -532,8 +705,15 @@ class rubix
 
     }
     
+    // f'(n,2)   b'(n,0)
     void antclockw(int n, int pos)
     {
+        if(n<0) 
+        {
+            clockw(n*-1,pos);
+            return;        
+        
+        }
         if(n==2)
         {
             swap(*f_left,*f_right,{{pos,2-pos+6},{pos+3,2-pos+3},{pos+6,2-pos}});  //036 852   147 741 258 630
@@ -734,24 +914,20 @@ class rubix
 
     void test()
     {
-        green = {'0', '1', '2', '3', 'g', '5', '6', '7', '8'};
-        white = {'0', '1', '2', '3', 'w', '5', '6', '7', '8'};
-        blue = {'0', '1', '2', '3', 'b', '5', '6', '7', '8'};
-        yellow = {'0', '1', '2', '3', 'y', '5', '6', '7', '8'};
-        red = {'0', '1', '2', '3', 'r', '5', '6', '7', '8'};
-        orange = {'0', '1', '2', '3', 'o', '5', '6', '7', '8'};
+        // red[1]='W';
+        // white[1]='O';
+        // white[7]='R';
+        // orange[7]='W';
 
+        up(1,2);
+        right(2,0);
 
-        clockw(1,0);
         print_all();
-        antclockw(1,0);
-        print_all();
-        clockw(2,0);
-        print_all();
-        antclockw(2,0);
-        print_all();
+        solve_cube(20);
 
-      
+        std::cout<<"START OF SOLUTION\n";
+        print_soln();
+        
     };
     
 
